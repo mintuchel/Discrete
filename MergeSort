@@ -1,0 +1,61 @@
+#pragma warning(disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#define max(a,b) a>b ? a : b;
+#define SIZE 101
+
+void Mergesort(int arr[], int left,int right);
+
+void MergeTwoArea(int arr[], int left, int mid, int right);
+
+int main(void) {
+	int arr[SIZE];
+	int N; scanf("%d", &N);
+	for (int i = 0; i < N; i++) scanf("%d", &arr[i]);
+
+	Mergesort(arr, 0,N-1);
+
+	for (int i = 0; i < N; i++) printf("%d ", arr[i]);
+	return 0;
+}
+
+void Mergesort(int arr[], int left,int right) {
+	int mid;
+
+	if (left < right) {
+		mid = (left + right) / 2;
+
+		Mergesort(arr, left, mid);
+		Mergesort(arr, mid + 1, right);
+
+		MergeTwoArea(arr, left, mid, right);
+	}
+}
+
+void MergeTwoArea(int arr[], int left, int mid, int right) {
+	
+	int* sortArr = (int*)malloc(sizeof(int) * (right + 1));
+
+	int fIdx=left, rIdx=mid+1;
+	int idx = left;
+
+	// 병합 할 두 영역의 데이터들을 비교하여 정렬 순서대로 sortArr에 하나씩 옮겨 담는다.
+	while (fIdx <= mid && rIdx <= right) {
+
+		if (arr[fIdx] <= arr[rIdx]) sortArr[idx] = arr[fIdx++];
+		else { sortArr[idx] = arr[rIdx++]; }
+		idx++;
+	}
+
+	if (fIdx > mid) {
+		while (rIdx <= right) sortArr[idx++] = arr[rIdx++];
+	}
+	else {
+		while (fIdx <= mid) sortArr[idx++] = arr[fIdx++];
+	}
+
+	for (int i = left; i <= right; i++) arr[i] = sortArr[i];
+	free(sortArr);
+}
